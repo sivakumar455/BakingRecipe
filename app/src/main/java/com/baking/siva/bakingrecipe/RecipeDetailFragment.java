@@ -21,6 +21,7 @@ import java.util.HashMap;
 public class RecipeDetailFragment extends Fragment {
     HashMap<String, HashMap<String, String>> hashIng;
     HashMap<String, String> hashStep;
+
     public RecipeDetailFragment(){
 
     }
@@ -35,7 +36,9 @@ public class RecipeDetailFragment extends Fragment {
 
         }else if (b.getSerializable("hashSteps") != null){
             hashStep = (HashMap<String, String>) b.getSerializable("hashSteps");
-            Log.v("hashIngredients", String.valueOf(Arrays.asList(hashStep)));
+            Log.v("hashSteps", String.valueOf(Arrays.asList(hashStep)));
+        }else {
+            Log.v("TAB","Neither Steps nor Ingredients");
         }
     }
 
@@ -44,6 +47,7 @@ public class RecipeDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = null;
+        Log.v("TAB","Checking tab2");
         if (hashStep != null) {
             rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
             TextView textView = rootView.findViewById(R.id.recipe_detail_text_view);
@@ -65,6 +69,9 @@ public class RecipeDetailFragment extends Fragment {
             }
             Toast.makeText(getActivity().getApplicationContext(),"HashTag",Toast.LENGTH_SHORT).show();
 
+        }
+        else {
+            Log.v("TAB","Checking tab3");
         }
         return rootView;
     }

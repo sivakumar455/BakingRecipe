@@ -13,6 +13,7 @@ import java.util.HashMap;
 public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeStepsFragment.OnStepClickListener{
 
     HashMap<String, HashMap<String, String>> recipeDet;
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,25 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
         fragmentManager.beginTransaction()
                 .add(R.id.recipe_steps_container,recipeStepsFragment)
                 .commit();
+        if(findViewById(R.id.tab_container) != null) {
+            // This LinearLayout will only initially exist in the two-pane tablet case
+            Log.v("TAB","Checking tab");
+            mTwoPane = true;
+
+            RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+            Bundle b = new Bundle();
+            b.putSerializable("hashIngredients",recipeDet);
+            recipeDetailFragment.setArguments(b);
+
+            Log.v("TAB","Checking tab1");
+            FragmentManager fragmentDetManager = getSupportFragmentManager();
+            fragmentDetManager.beginTransaction()
+                    .add(R.id.recipe_detail_container,recipeDetailFragment)
+                    .commit();
+        }else {
+            // We're in single-pane mode and displaying fragments on a phone in separate activities
+            mTwoPane = false;
+        }
     }
 
     @Override
@@ -61,8 +81,22 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
         //b.putSerializable("hashmap",recipeDet);
 
         // Attach the Bundle to an intent
-        Intent intent = new Intent(this, RecipeDetailActivity.class);
-        intent.putExtras(b);
-        startActivity(intent);
+        if (mTwoPane) {
+            Toast.makeText(this, "Cicked in Mtwopane", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "d in Mtwopane", Toast.LENGTH_SHORT).show();
+
+            RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+            recipeDetailFragment.setArguments(b);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.recipe_detail_container,recipeDetailFragment)
+                    .commit();
+
+        }else {
+            Intent intent = new Intent(this, RecipeDetailActivity.class);
+            intent.putExtras(b);
+            startActivity(intent);
+        }
     }
 }
