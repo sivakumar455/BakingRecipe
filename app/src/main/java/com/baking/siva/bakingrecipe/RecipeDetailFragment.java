@@ -1,5 +1,7 @@
 package com.baking.siva.bakingrecipe;
 
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -21,6 +36,8 @@ import java.util.HashMap;
 public class RecipeDetailFragment extends Fragment {
     HashMap<String, HashMap<String, String>> hashIng;
     HashMap<String, String> hashStep;
+    private SimpleExoPlayer mExoPlayer;
+    private SimpleExoPlayerView mPlayerView;
 
     public RecipeDetailFragment(){
 
@@ -52,6 +69,12 @@ public class RecipeDetailFragment extends Fragment {
             rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
             TextView textView = rootView.findViewById(R.id.recipe_detail_text_view);
             textView.setText(hashStep.get("description"));
+            // Initialize the player view.
+            mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
+            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
+                    (getResources(), R.drawable.exo_controls_play));
+            initializePlayer(Uri.parse(hashStep.get("videoURL")));
+
             TextView videoView = rootView.findViewById(R.id.recipe_step_video_url);
             videoView.setText(hashStep.get("videoURL"));
 
@@ -74,5 +97,32 @@ public class RecipeDetailFragment extends Fragment {
             Log.v("TAB","Checking tab3");
         }
         return rootView;
+    }
+
+    private void initializePlayer(Uri mediaUri) {
+        if (mExoPlayer == null) {
+            // Create an instance of the ExoPlayer.
+            TrackSelector trackSelector = new DefaultTrackSelector();
+            LoadControl loadControl = new DefaultLoadControl();
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector,loadControl);
+            mPlayerView.setPlayer(mExoPlayer);
+
+            // Prepare the MediaSource.
+            String userAgent = Util.getUserAgent(getContext(), "RecipeDetail");
+            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+                    getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
+            mExoPlayer.prepare(mediaSource);
+            mExoPlayer.setPlayWhenReady(true);
+        }
+    }
+
+
+    /**
+     * Release ExoPlayer.
+     */
+    private void releasePlayer() {
+        mExoPlayer.stop();
+        mExoPlayer.release();
+        mExoPlayer = null;
     }
 }
