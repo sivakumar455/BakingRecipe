@@ -47,9 +47,10 @@ public class RecipeStepsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Bundle b = this.getArguments();
-        if(b.getSerializable("hashmap") != null)
-            recipeDet = (HashMap<String, HashMap<String, String>>)b.getSerializable("hashmap");
-        Log.v("MAP", String.valueOf(Arrays.asList(recipeDet)));
+        if(b.getSerializable("hashmap") != null) {
+            recipeDet = (HashMap<String, HashMap<String, String>>) b.getSerializable("hashmap");
+            Log.v("MAP", String.valueOf(Arrays.asList(recipeDet)));
+        }
 
     }
 

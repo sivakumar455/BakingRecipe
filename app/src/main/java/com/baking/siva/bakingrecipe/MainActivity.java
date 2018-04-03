@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
 
 import com.baking.siva.bakingrecipe.util.HttpRequest;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int RECIPE_LOADER = 99;
     private static Parcelable state;
     ListView listView;
+    GridView gridView;
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         Bundle myBundle = new Bundle();
         myBundle.putString(RECIPE_URL_KEY, RECIPE_URL);
+
+        if(findViewById(R.id.recipe_grid_view) != null){
+            mTwoPane = true;
+        }
 
         LoaderManager loaderManager = getSupportLoaderManager();
         Loader<String> recipeLoader = loaderManager.getLoader(RECIPE_LOADER);
@@ -100,25 +107,50 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         RecipeList recipeNameList = new RecipeList(data);
         ArrayList<String> recipeList = recipeNameList.getRecipeList();
 
-        listView = findViewById(R.id.recipe_list_view);
-        RecipeAdapter recipeAdapter = new RecipeAdapter(this, recipeList);
-        listView.setAdapter(recipeAdapter);
-        if(state != null) {
-            Log.d("MainAcitvity", "trying to restore gridview state..");
-            listView.onRestoreInstanceState(state);
-        }
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                HashMap<String,HashMap<String,String> > myRecipe;
-                RecipeList recipeDtl = new RecipeList(data);
-                myRecipe =recipeDtl.getRecipeDetails(position);
-                Log.v("MAP", String.valueOf(Arrays.asList(myRecipe)));
-                Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT,myRecipe);
-                startActivity(intent);
+        if(!mTwoPane) {
+            Log.v("MODE","Single Pane");
+
+            listView = findViewById(R.id.recipe_list_view);
+            RecipeAdapter recipeAdapter = new RecipeAdapter(this, recipeList);
+            listView.setAdapter(recipeAdapter);
+            if (state != null) {
+                Log.d("MainAcitvity", "trying to restore listview state..");
+                listView.onRestoreInstanceState(state);
             }
-        });
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    HashMap<String, HashMap<String, String>> myRecipe;
+                    RecipeList recipeDtl = new RecipeList(data);
+                    myRecipe = recipeDtl.getRecipeDetails(position);
+                    Log.v("MAP", String.valueOf(Arrays.asList(myRecipe)));
+                    Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
+                    intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
+                    startActivity(intent);
+                }
+            });
+        }else{
+            Log.v("MODE","Two Pane");
+            gridView = findViewById(R.id.recipe_grid_view);
+            RecipeAdapter recipeAdapter = new RecipeAdapter(this, recipeList);
+            gridView.setAdapter(recipeAdapter);
+            if (state != null) {
+                Log.d("MainAcitvity", "trying to restore gridview state..");
+                gridView.onRestoreInstanceState(state);
+            }
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    HashMap<String, HashMap<String, String>> myRecipe;
+                    RecipeList recipeDtl = new RecipeList(data);
+                    myRecipe = recipeDtl.getRecipeDetails(position);
+                    Log.v("MAP", String.valueOf(Arrays.asList(myRecipe)));
+                    Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
+                    intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override

@@ -35,16 +35,19 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
         RecipeStepsFragment recipeStepsFragment = new RecipeStepsFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("hashmap",recipeDet);
-        recipeStepsFragment.setArguments(bundle);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.recipe_steps_container,recipeStepsFragment)
-                .commit();
         if(findViewById(R.id.tab_container) != null) {
             // This LinearLayout will only initially exist in the two-pane tablet case
             Log.v("TAB","Checking tab");
             mTwoPane = true;
+
+            bundle.putString("mode","twopane");
+            recipeStepsFragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .add(R.id.recipe_steps_container,recipeStepsFragment)
+                    .commit();
 
             RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
             Bundle b = new Bundle();
@@ -58,6 +61,12 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
                     .commit();
         }else {
             // We're in single-pane mode and displaying fragments on a phone in separate activities
+            recipeStepsFragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .add(R.id.recipe_steps_container,recipeStepsFragment)
+                    .commit();
             mTwoPane = false;
         }
     }

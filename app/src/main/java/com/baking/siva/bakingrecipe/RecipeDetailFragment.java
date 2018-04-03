@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -73,10 +74,9 @@ public class RecipeDetailFragment extends Fragment {
             mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
             mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                     (getResources(), R.drawable.exo_controls_play));
-            initializePlayer(Uri.parse(hashStep.get("videoURL")));
-
-            TextView videoView = rootView.findViewById(R.id.recipe_step_video_url);
-            videoView.setText(hashStep.get("videoURL"));
+            if(!hashStep.get("videoURL").isEmpty() ) {
+                initializePlayer(Uri.parse(hashStep.get("videoURL")));
+            }
 
         }else if(hashIng != null){
             rootView = inflater.inflate(R.layout.fragment_ingredients_list, container, false);
@@ -85,9 +85,11 @@ public class RecipeDetailFragment extends Fragment {
             LinearLayout linearLayout = rootView.findViewById(R.id.fragment_ingredients);
             for (int idx=0; idx<Integer.parseInt(hashIng.get("Length").get("ingredientLength")); idx++) {
                 TextView textView = new TextView(getActivity().getApplicationContext());
-                textView.setText(hashIng.get("ingredients"+idx).get("ingredient")+ "\t"+
-                        hashIng.get("ingredients"+idx).get("quantity")+"\t"+
+                textView.setText(hashIng.get("ingredients"+idx).get("ingredient")+ "\t\t\t"+
+                        hashIng.get("ingredients"+idx).get("quantity")+"\t\t\t"+
                         hashIng.get("ingredients"+idx).get("measure"));
+                textView.setTextSize(18);
+                textView.setPadding(12,12,12,12);
                 linearLayout.addView(textView);
             }
             Toast.makeText(getActivity().getApplicationContext(),"HashTag",Toast.LENGTH_SHORT).show();
@@ -104,7 +106,7 @@ public class RecipeDetailFragment extends Fragment {
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector,loadControl);
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector,loadControl);
             mPlayerView.setPlayer(mExoPlayer);
 
             // Prepare the MediaSource.
