@@ -27,16 +27,18 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * Created by sivakumarpadala on 31/03/18.
+ * @author Siva Kumar Padala
+ * @version 1.0
+ * @since 04/02/18
  */
 
 public class RecipeDetailFragment extends Fragment {
-    HashMap<String, HashMap<String, String>> hashIng;
-    HashMap<String, String> hashStep;
+    private HashMap<String, HashMap<String, String>> hashIng;
+    private HashMap<String, String> hashStep;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
 
@@ -50,11 +52,11 @@ public class RecipeDetailFragment extends Fragment {
         Bundle b = this.getArguments();
         if(b.getSerializable("hashIngredients") != null) {
             hashIng = (HashMap<String, HashMap<String, String>>) b.getSerializable("hashIngredients");
-            Log.v("hashIngredients", String.valueOf(Arrays.asList(hashIng)));
+            Log.v("hashIngredients", String.valueOf(Collections.singletonList(hashIng)));
 
         }else if (b.getSerializable("hashSteps") != null){
             hashStep = (HashMap<String, String>) b.getSerializable("hashSteps");
-            Log.v("hashSteps", String.valueOf(Arrays.asList(hashStep)));
+            Log.v("hashSteps", String.valueOf(Collections.singletonList(hashStep)));
         }else {
             Log.v("TAB","Neither Steps nor Ingredients");
         }
@@ -71,7 +73,7 @@ public class RecipeDetailFragment extends Fragment {
             TextView textView = rootView.findViewById(R.id.recipe_detail_text_view);
             textView.setText(hashStep.get("description"));
             // Initialize the player view.
-            mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
+            mPlayerView = rootView.findViewById(R.id.playerView);
             mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                     (getResources(), R.drawable.exo_controls_play));
             if(!hashStep.get("videoURL").isEmpty() ) {
@@ -85,9 +87,13 @@ public class RecipeDetailFragment extends Fragment {
             LinearLayout linearLayout = rootView.findViewById(R.id.fragment_ingredients);
             for (int idx=0; idx<Integer.parseInt(hashIng.get("Length").get("ingredientLength")); idx++) {
                 TextView textView = new TextView(getActivity().getApplicationContext());
-                textView.setText(hashIng.get("ingredients"+idx).get("ingredient")+ "\t\t\t"+
+                /*textView.setText(hashIng.get("ingredients"+idx).get("ingredient")+ "\t\t\t"+
                         hashIng.get("ingredients"+idx).get("quantity")+"\t\t\t"+
-                        hashIng.get("ingredients"+idx).get("measure"));
+                        hashIng.get("ingredients"+idx).get("measure"));*/
+                textView.setText(getString(R.string.ingredients,hashIng.get("ingredients"+idx).get("ingredient"),
+                        hashIng.get("ingredients"+idx).get("quantity"),
+                        hashIng.get("ingredients"+idx).get("measure")));
+
                 textView.setTextSize(18);
                 textView.setPadding(12,12,12,12);
                 linearLayout.addView(textView);

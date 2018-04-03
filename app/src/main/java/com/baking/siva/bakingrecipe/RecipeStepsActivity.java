@@ -7,12 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeStepsFragment.OnStepClickListener{
 
-    HashMap<String, HashMap<String, String>> recipeDet;
+    private HashMap<String, HashMap<String, String>> recipeDet;
     private boolean mTwoPane;
 
     @Override
@@ -28,7 +28,7 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
             Log.v("MAP",recipeDet.get("ingredients1").get("ingredient"));
             Log.v("MAP",recipeDet.get("Length").get("ingredientLength"));
             Log.v("MAP",recipeDet.get("Length").get("stepLength"));
-            Log.v("MAP", String.valueOf(Arrays.asList(recipeDet)));
+            Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
             //Picasso.with(getApplicationContext()).load(movieDet.get("poster")).placeholder(R.drawable.ic_launcher_background).into(poster);
         }
 
@@ -74,17 +74,17 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
     @Override
     public void OnStepSelected(int position) {
         Toast.makeText(this, "Position clicked = " + position, Toast.LENGTH_SHORT).show();
-        HashMap<String, HashMap<String, String>> hashMap;
+        //HashMap<String, HashMap<String, String>> hashMap;
         Bundle b = new Bundle();
 
         if(position ==0){
             //hashMap = recipeDet.get("ingredients").get("ingredient0");
             b.putSerializable("hashIngredients",recipeDet);
-            Log.v("RecipeStepsActivity", String.valueOf(Arrays.asList(recipeDet)));
+            Log.v("RecipeStepsActivity", String.valueOf(Collections.singletonList(recipeDet)));
         }else{
             position = position-1;
             b.putSerializable("hashSteps",recipeDet.get("steps"+position));
-            Log.v("RecipeStepsActivity", String.valueOf(Arrays.asList(recipeDet.get("steps"+position))));
+            Log.v("RecipeStepsActivity", String.valueOf(Collections.singletonList(recipeDet.get("steps" + position))));
         }
 
         //b.putSerializable("hashmap",recipeDet);

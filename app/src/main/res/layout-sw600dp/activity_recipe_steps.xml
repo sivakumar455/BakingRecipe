@@ -4,18 +4,17 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <FrameLayout
         android:id="@+id/recipe_steps_container"
-        android:layout_width="400dp"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_width="500dp"
+        android:layout_height="match_parent" />
     <!-- A small divider -->
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/recipe_detail_tab_view"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context="com.baking.siva.bakingrecipe.RecipeDetailActivity">
@@ -24,6 +23,7 @@
             android:id="@+id/recipe_detail_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
         </FrameLayout>
 
     </LinearLayout>

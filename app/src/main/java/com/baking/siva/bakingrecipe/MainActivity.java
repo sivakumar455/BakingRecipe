@@ -18,17 +18,18 @@ import com.baking.siva.bakingrecipe.util.HttpRequest;
 import com.baking.siva.bakingrecipe.util.RecipeList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
     private final static String RECIPE_URL_KEY = "RECIPE_URL_KEY";
     private final static String RECIPE_URL =
-            "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+            "https://gist.githubusercontent.com/sivakumar455/ef700c03d15d1d6530e082b0f96e93e9/raw/e726bf72a2b8b21c4620b3ca2c701c75280b0b95/baking.json";
+            //"https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     private static final int RECIPE_LOADER = 99;
     private static Parcelable state;
-    ListView listView;
-    GridView gridView;
+    private ListView listView;
+    private GridView gridView;
     private boolean mTwoPane;
 
     @Override
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     HashMap<String, HashMap<String, String>> myRecipe;
                     RecipeList recipeDtl = new RecipeList(data);
                     myRecipe = recipeDtl.getRecipeDetails(position);
-                    Log.v("MAP", String.valueOf(Arrays.asList(myRecipe)));
+                    Log.v("MAP", String.valueOf(Collections.singletonList(myRecipe)));
                     Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
                     intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
                     startActivity(intent);
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     HashMap<String, HashMap<String, String>> myRecipe;
                     RecipeList recipeDtl = new RecipeList(data);
                     myRecipe = recipeDtl.getRecipeDetails(position);
-                    Log.v("MAP", String.valueOf(Arrays.asList(myRecipe)));
+                    Log.v("MAP", String.valueOf(Collections.singletonList(myRecipe)));
                     Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
                     intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
                     startActivity(intent);

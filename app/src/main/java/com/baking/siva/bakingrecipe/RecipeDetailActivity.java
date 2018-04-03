@@ -6,11 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class RecipeDetailActivity extends AppCompatActivity {
-    HashMap<String, HashMap<String, String> > recipeDet;
+    private HashMap<String, HashMap<String, String> > recipeDet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +22,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         if(intent.getSerializableExtra("hashIngredients") != null) {
             recipeDet = (HashMap<String, HashMap<String, String>>) intent.getSerializableExtra("hashIngredients");
-            Log.v("MAP", String.valueOf(Arrays.asList(recipeDet)));
+            Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
             bundle.putSerializable("hashIngredients",recipeDet);
         }else if (intent.getSerializableExtra("hashSteps") != null){
-               HashMap<String,String> steps = new HashMap<String,String>();
+               HashMap<String,String> steps;
                steps = (HashMap<String,String>) intent.getSerializableExtra("hashSteps");
-            Log.v("MAP", String.valueOf(Arrays.asList(steps)));
+            Log.v("MAP", String.valueOf(Collections.singletonList(steps)));
             bundle.putSerializable("hashSteps",steps);
         }
 

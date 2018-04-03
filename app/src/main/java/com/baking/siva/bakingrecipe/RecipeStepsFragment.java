@@ -12,19 +12,21 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * Created by sivakumarpadala on 31/03/18.
+ * @author Siva Kumar Padala
+ * @version 1.0
+ * @since 04/02/18
  */
 
 public class RecipeStepsFragment extends Fragment {
-    HashMap<String, HashMap<String, String>> recipeDet;
-    OnStepClickListener mCallback;
+    private HashMap<String, HashMap<String, String>> recipeDet;
+    private OnStepClickListener mCallback;
 
     public interface OnStepClickListener{
-        public void OnStepSelected(int position);
+        void OnStepSelected(int position);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class RecipeStepsFragment extends Fragment {
         Bundle b = this.getArguments();
         if(b.getSerializable("hashmap") != null) {
             recipeDet = (HashMap<String, HashMap<String, String>>) b.getSerializable("hashmap");
-            Log.v("MAP", String.valueOf(Arrays.asList(recipeDet)));
+            Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
         }
 
     }
@@ -60,10 +62,10 @@ public class RecipeStepsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_recipe_steps,container,false);
         ListView listView = rootView.findViewById(R.id.recipe_steps_list_view);
 
-        ArrayList<String> recStep=new ArrayList<String>(); // = new ArrayList<String>(Arrays.asList(recSteps));
+        ArrayList<String> recStep= new ArrayList<>(); // = new ArrayList<String>(Arrays.asList(recSteps));
         //String recSteps[] = {"ABC","123"};
         recStep.add("Ingredients");
-        Log.v("MAP", String.valueOf(Arrays.asList(recipeDet)));
+        Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
         for (int idx=0 ; idx < Integer.parseInt(recipeDet.get("Length").get("stepLength")); idx++){
             Log.v("MAP","steps"+idx);
             recStep.add(recipeDet.get("steps"+idx).get("shortDescription"));

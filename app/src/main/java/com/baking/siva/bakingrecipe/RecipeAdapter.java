@@ -10,12 +10,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by sivakumarpadala on 01/04/18.
+ * @author Siva Kumar Padala
+ * @version 1.0
+ * @since 04/02/18
  */
 
 public class RecipeAdapter extends BaseAdapter {
-    LayoutInflater inflater;
-    ArrayList<String> recipeList;
+    private final LayoutInflater inflater;
+    private final ArrayList<String> recipeList;
 
     public RecipeAdapter(Context context, ArrayList<String> recipeList){
 

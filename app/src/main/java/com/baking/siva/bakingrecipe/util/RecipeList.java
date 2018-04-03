@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by sivakumarpadala on 01/04/18.
+ * @author Siva Kumar Padala
+ * @version 1.0
+ * @since 04/02/18
  */
 
 public class RecipeList {
@@ -34,14 +36,14 @@ public class RecipeList {
     }
 
     public HashMap<String,HashMap<String,String>> getRecipeDetails(int position){
-        HashMap<String ,HashMap<String,String>> map = new HashMap<String ,HashMap<String,String>>();
+        HashMap<String ,HashMap<String,String>> map = new HashMap<>();
         HashMap<String,String> innMap;
         try {
             JSONArray objectResults = new JSONArray(jsonRecipeObj);
             JSONObject objName = objectResults.getJSONObject(position);
             JSONArray objIngrds = objName.getJSONArray("ingredients");
             for (int idx=0; idx < objIngrds.length();idx++) {
-                innMap = new HashMap<String, String>();
+                innMap = new HashMap<>();
                 JSONObject objIng = objIngrds.getJSONObject(idx);
                 String quantity = objIng.getString("quantity");
                 String measure = objIng.getString("measure");
@@ -54,7 +56,7 @@ public class RecipeList {
 
             JSONArray objSteps = objName.getJSONArray("steps");
             for (int idx=0; idx < objSteps.length();idx++) {
-                innMap = new HashMap<String, String>();
+                innMap = new HashMap<>();
                 JSONObject objStep = objSteps.getJSONObject(idx);
                 String shortDescription = objStep.getString("shortDescription");
                 String description = objStep.getString("description");
@@ -70,7 +72,7 @@ public class RecipeList {
 
                 map.put("steps"+idx,innMap);
             }
-            innMap = new HashMap<String, String>();
+            innMap = new HashMap<>();
             innMap.put("ingredientLength",String.valueOf(objIngrds.length()));
             innMap.put("stepLength",String.valueOf(objSteps.length()));
             map.put("Length",innMap);

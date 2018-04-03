@@ -10,7 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by sivakumarpadala on 01/04/18.
+ * @author Siva Kumar Padala
+ * @version 1.0
+ * @since 04/02/18
  */
 
 public class HttpRequest {
@@ -18,6 +20,7 @@ public class HttpRequest {
     private final String url;
 
     public HttpRequest(String url){
+
         this.url = url;
         httpUrl = buildUrl();
     }
