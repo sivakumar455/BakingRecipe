@@ -2,4 +2,6 @@
     <string name="app_name">BakingRecipe</string>
     <string name="title_activity_recipe_steps">RecipeStepsActivity</string>
     <string name="ingredients">%1$s\t\t\t%2$s\t\t\t%3$s</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

@@ -18,7 +18,8 @@ import static org.hamcrest.Matchers.anything;
 
 @RunWith(AndroidJUnit4.class)
 public class RecipeListViewTest {
-    @Rule public ActivityTestRule<MainActivity> myTest = new ActivityTestRule<>(MainActivity.class);
+    @Rule
+    public ActivityTestRule<MainActivity> myTest = new ActivityTestRule<>(MainActivity.class);
 
     @Test
     public void click_on_list_view_images(){

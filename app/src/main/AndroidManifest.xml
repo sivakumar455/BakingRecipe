@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,21 +17,38 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
                 <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
                 <data
                     android:host="baking-siva"
-                    android:scheme="baking-recipe"/>
+                    android:scheme="baking-recipe" />
             </intent-filter>
         </activity>
         <activity
             android:name=".RecipeDetailActivity"
             android:label="RecipeDetails"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".RecipeStepsActivity"
-            android:label="RecipeSteps">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RecipeStepsActivity"
+            android:label="RecipeSteps" />
+
+        <receiver android:name=".BakingWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/baking_widget_provider_info" />
+        </receiver>
+
+        <service android:name=".GridWidgetService"
+         android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
     </application>
 
 </manifest>
