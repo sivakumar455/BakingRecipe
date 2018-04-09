@@ -4,4 +4,6 @@
     <string name="ingredients">%1$s\t\t\t%2$s\t\t\t%3$s</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="baking_recipe">Baking Recipe</string>
+    <string name="widget_image">Widget Image</string>
 </resources>

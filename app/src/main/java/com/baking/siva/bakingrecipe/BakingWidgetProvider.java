@@ -11,12 +11,14 @@ import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 /**
- * Implementation of App Widget functionality.
+ * @author Siva Kumar Padala
+ * @version 1.0
+ * @since 04/02/18
  */
 public class BakingWidgetProvider extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
+    private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                        int appWidgetId) {
 
         //CharSequence widgetText = context.getString(R.string.appwidget_text);
         // Construct the RemoteViews object
@@ -47,13 +49,6 @@ public class BakingWidgetProvider extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        /*int viewIndex = intent.getIntExtra("position", 0);
-        Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();*/
-        super.onReceive(context, intent);
     }
 
     @Override

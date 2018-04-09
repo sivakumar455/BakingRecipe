@@ -16,7 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by sivakumarpadala on 08/04/18.
+ * @author Siva Kumar Padala
+ * @version 1.0
+ * @since 04/02/18
  */
 
 public class GridWidgetService extends RemoteViewsService {
@@ -29,11 +31,11 @@ public class GridWidgetService extends RemoteViewsService {
 
 class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
 
-    Context mContext;
-    Intent mIntent;
-    List<String> collection = new ArrayList<>();
-    RecipeList recipeNameList;
-    HttpRequest myRecipeList;
+    private final Context mContext;
+    private Intent mIntent;
+    private List<String> collection = new ArrayList<>();
+    private RecipeList recipeNameList;
+    private HttpRequest myRecipeList;
 
     private final static String RECIPE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
@@ -52,11 +54,9 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
             myRecipeList = new HttpRequest(myrecipe);
             recipeNameList = new RecipeList(myRecipeList.getJsonString());
             collection = recipeNameList.getRecipeList();
-            return;
             //return myRecipeList.getJsonString();
         }catch (Exception e){
             e.printStackTrace();
-            return;
         }
 
     }
