@@ -2,10 +2,17 @@ package com.baking.siva.bakingrecipe;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.baking.siva.bakingrecipe.util.HttpRequest;
+import com.baking.siva.bakingrecipe.util.RecipeList;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,11 +32,31 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
     Context mContext;
     Intent mIntent;
     List<String> collection = new ArrayList<>();
+    RecipeList recipeNameList;
+    HttpRequest myRecipeList;
+
+    private final static String RECIPE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     private void initData(){
-        collection.clear();
+
+
+        /*collection.clear();
         for (int idx= 0; idx<10;idx++){
             collection.add("List"+idx);
+        }*/
+        String myrecipe = RECIPE_URL ;
+
+        try {
+            Log.v("GridRemoteViewsFactory","GridRemoteViewsFactory try ");
+            Log.v("GridRemoteViewsFactory",myrecipe);
+            myRecipeList = new HttpRequest(myrecipe);
+            recipeNameList = new RecipeList(myRecipeList.getJsonString());
+            collection = recipeNameList.getRecipeList();
+            return;
+            //return myRecipeList.getJsonString();
+        }catch (Exception e){
+            e.printStackTrace();
+            return;
         }
 
     }
@@ -67,6 +94,19 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
         RemoteViews view = new RemoteViews(mContext.getPackageName(),
                 android.R.layout.simple_list_item_1);
         view.setTextViewText(android.R.id.text1, collection.get(position));
+
+        Bundle extras = new Bundle();
+        //extras.putInt("position", position);
+        HashMap<String, HashMap<String, String>> myRecipe;
+
+        RecipeList recipeDtl = new RecipeList(myRecipeList.getJsonString());
+        myRecipe = recipeDtl.getRecipeDetails(position);
+        extras.putSerializable("hashIngredients", myRecipe);
+        Log.v("GridRemoteViewsFactory", String.valueOf(Collections.singletonList(myRecipe)));
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtras(extras);
+        view.setOnClickFillInIntent(android.R.id.text1, fillInIntent);
+
         return view;
     }
 
@@ -77,7 +117,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.baking.siva.bakingrecipe;
 
 import android.annotation.TargetApi;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -28,9 +29,13 @@ public class BakingWidgetProvider extends AppWidgetProvider {
             setRemoteAdapterV11(context, views);
         }
 
-        /*Intent intent = new Intent(context,MainActivity.class);
+        Intent appIntent = new Intent(context, RecipeDetailActivity.class);
+        PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setPendingIntentTemplate(R.id.recipe_list_view, appPendingIntent);
+
+        Intent intent = new Intent(context,MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
-        views.setOnClickPendingIntent(R.id.widget_baking_image,pendingIntent);*/
+        views.setOnClickPendingIntent(R.id.widget_layout_main,pendingIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -42,6 +47,13 @@ public class BakingWidgetProvider extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        /*int viewIndex = intent.getIntExtra("position", 0);
+        Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();*/
+        super.onReceive(context, intent);
     }
 
     @Override
