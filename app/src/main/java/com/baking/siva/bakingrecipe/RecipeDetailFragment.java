@@ -15,13 +15,19 @@ import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -36,7 +42,7 @@ import java.util.HashMap;
  * @since 04/02/18
  */
 
-public class RecipeDetailFragment extends Fragment {
+public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventListener{
     private HashMap<String, HashMap<String, String>> hashIng;
     private HashMap<String, String> hashStep;
     private SimpleExoPlayer mExoPlayer;
@@ -77,7 +83,15 @@ public class RecipeDetailFragment extends Fragment {
             mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                     (getResources(), R.drawable.exo_controls_play));
             if(!hashStep.get("videoURL").isEmpty() ) {
+                Log.v("videourl",hashStep.get("videoURL"));
                 initializePlayer(Uri.parse(hashStep.get("videoURL")));
+            }
+            else
+            {
+                //View myView = rootView.findViewById(R.id.playerView);
+                //mPlayerView.onViewRemoved(myView);
+                Log.v("no videourl",hashStep.get("videoURL"));
+                mPlayerView.removeAllViews();
             }
 
         }else if(hashIng != null){
@@ -129,8 +143,62 @@ public class RecipeDetailFragment extends Fragment {
      * Release ExoPlayer.
      */
     private void releasePlayer() {
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if(mExoPlayer != null) {
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //releasePlayer();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+    }
+
+    @Override
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+    }
+
+    @Override
+    public void onLoadingChanged(boolean isLoading) {
+
+    }
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if((playbackState == ExoPlayer.STATE_READY) && playWhenReady){
+            Log.d("ExoPlayer", "onPlayerStateChanged: PLAYING");
+        } else if((playbackState == ExoPlayer.STATE_READY)){
+            Log.d("ExoPlayer", "onPlayerStateChanged: PAUSED");
+        }
+
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
     }
 }
