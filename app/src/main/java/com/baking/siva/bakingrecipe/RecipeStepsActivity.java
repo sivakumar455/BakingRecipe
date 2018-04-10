@@ -14,6 +14,8 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
 
     private HashMap<String, HashMap<String, String>> recipeDet;
     private boolean mTwoPane;
+    FragmentManager fragmentManagerOnePane;
+    RecipeStepsFragment recipeStepsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,53 +23,60 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
         setContentView(R.layout.activity_recipe_steps);
         final Intent intentStarted = getIntent();
 
-        if (intentStarted.hasExtra(Intent.EXTRA_TEXT)) {
-            recipeDet =
-                    (HashMap<String, HashMap<String, String>>) intentStarted.getSerializableExtra(Intent.EXTRA_TEXT);
-
-            Log.v("MAP",recipeDet.get("ingredients1").get("ingredient"));
-            Log.v("MAP",recipeDet.get("Length").get("ingredientLength"));
-            Log.v("MAP",recipeDet.get("Length").get("stepLength"));
-            Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
-            //Picasso.with(getApplicationContext()).load(movieDet.get("poster")).placeholder(R.drawable.ic_launcher_background).into(poster);
+        if (savedInstanceState != null) {
+            //Restore the fragment's instance
+            recipeStepsFragment = (RecipeStepsFragment) getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");
         }
+        else {
 
-        RecipeStepsFragment recipeStepsFragment = new RecipeStepsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("hashmap",recipeDet);
+            if (intentStarted.hasExtra(Intent.EXTRA_TEXT)) {
+                recipeDet =
+                        (HashMap<String, HashMap<String, String>>) intentStarted.getSerializableExtra(Intent.EXTRA_TEXT);
 
-        if(findViewById(R.id.tab_container) != null) {
-            // This LinearLayout will only initially exist in the two-pane tablet case
-            Log.v("TAB","Checking tab");
-            mTwoPane = true;
+                Log.v("MAP", recipeDet.get("ingredients1").get("ingredient"));
+                Log.v("MAP", recipeDet.get("Length").get("ingredientLength"));
+                Log.v("MAP", recipeDet.get("Length").get("stepLength"));
+                Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
+                //Picasso.with(getApplicationContext()).load(movieDet.get("poster")).placeholder(R.drawable.ic_launcher_background).into(poster);
+            }
 
-            bundle.putString("mode","twopane");
-            recipeStepsFragment.setArguments(bundle);
+            recipeStepsFragment = new RecipeStepsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("hashmap", recipeDet);
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .add(R.id.recipe_steps_container,recipeStepsFragment)
-                    .commit();
+            if (findViewById(R.id.tab_container) != null) {
+                // This LinearLayout will only initially exist in the two-pane tablet case
+                Log.v("TAB", "Checking tab");
+                mTwoPane = true;
 
-            RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
-            Bundle b = new Bundle();
-            b.putSerializable("hashIngredients",recipeDet);
-            recipeDetailFragment.setArguments(b);
+                bundle.putString("mode", "twopane");
+                recipeStepsFragment.setArguments(bundle);
 
-            Log.v("TAB","Checking tab1");
-            FragmentManager fragmentDetManager = getSupportFragmentManager();
-            fragmentDetManager.beginTransaction()
-                    .add(R.id.recipe_detail_container,recipeDetailFragment)
-                    .commit();
-        }else {
-            // We're in single-pane mode and displaying fragments on a phone in separate activities
-            recipeStepsFragment.setArguments(bundle);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .add(R.id.recipe_steps_container, recipeStepsFragment)
+                        .commit();
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .add(R.id.recipe_steps_container,recipeStepsFragment)
-                    .commit();
-            mTwoPane = false;
+                RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+                Bundle b = new Bundle();
+                b.putSerializable("hashIngredients", recipeDet);
+                recipeDetailFragment.setArguments(b);
+
+                Log.v("TAB", "Checking tab1");
+                FragmentManager fragmentDetManager = getSupportFragmentManager();
+                fragmentDetManager.beginTransaction()
+                        .add(R.id.recipe_detail_container, recipeDetailFragment)
+                        .commit();
+            } else {
+                // We're in single-pane mode and displaying fragments on a phone in separate activities
+                recipeStepsFragment.setArguments(bundle);
+
+                fragmentManagerOnePane = getSupportFragmentManager();
+                fragmentManagerOnePane.beginTransaction()
+                        .add(R.id.recipe_steps_container, recipeStepsFragment)
+                        .commit();
+                mTwoPane = false;
+            }
         }
     }
 
@@ -107,5 +116,11 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
             intent.putExtras(b);
             startActivity(intent);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, "myFragmentName", recipeStepsFragment);
     }
 }

@@ -24,8 +24,8 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
     private final static String RECIPE_URL_KEY = "RECIPE_URL_KEY";
     private final static String RECIPE_URL =
-            //"https://gist.githubusercontent.com/sivakumar455/ef700c03d15d1d6530e082b0f96e93e9/raw/e726bf72a2b8b21c4620b3ca2c701c75280b0b95/baking.json";
-            "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+            "https://gist.githubusercontent.com/sivakumar455/ef700c03d15d1d6530e082b0f96e93e9/raw/e726bf72a2b8b21c4620b3ca2c701c75280b0b95/baking.json";
+            //"https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     private static final int RECIPE_LOADER = 99;
     private static Parcelable state;
     private ListView listView;
@@ -161,10 +161,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("MainActivity", "saving listview state @onPause");
+        Log.d("MainActivity", "saving listview/gridview state @onPause");
         if (listView != null) {
             state = listView.onSaveInstanceState();
-
+        }else if (gridView != null){
+            state = gridView.onSaveInstanceState();
         }
     }
 }
