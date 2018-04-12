@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -47,6 +46,7 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
     private HashMap<String, String> hashStep;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
+
 
     public RecipeDetailFragment(){
 
@@ -112,7 +112,7 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
                 textView.setPadding(12,12,12,12);
                 linearLayout.addView(textView);
             }
-            Toast.makeText(getActivity().getApplicationContext(),"HashTag",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity().getApplicationContext(),"HashTag",Toast.LENGTH_SHORT).show();
 
         }
         else {
@@ -148,12 +148,6 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
             mExoPlayer.release();
             mExoPlayer = null;
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        //releasePlayer();
     }
 
     @Override

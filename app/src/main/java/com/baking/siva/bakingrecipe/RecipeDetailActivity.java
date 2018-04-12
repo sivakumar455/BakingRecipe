@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class RecipeDetailActivity extends AppCompatActivity {
     private HashMap<String, HashMap<String, String> > recipeDet;
-    RecipeDetailFragment recipeDetailFragment;
+    private RecipeDetailFragment recipeDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +20,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             //Restore the fragment's instance
+            recipeDet = (HashMap<String, HashMap<String, String>>) savedInstanceState.getSerializable("recipeDet");
             recipeDetailFragment = (RecipeDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");
         }
         else {
@@ -31,6 +32,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 recipeDet = (HashMap<String, HashMap<String, String>>) intent.getSerializableExtra("hashIngredients");
                 Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
                 bundle.putSerializable("hashIngredients", recipeDet);
+
             } else if (intent.getSerializableExtra("hashSteps") != null) {
                 HashMap<String, String> steps;
                 steps = (HashMap<String, String>) intent.getSerializableExtra("hashSteps");
@@ -54,5 +56,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, "myFragmentName", recipeDetailFragment);
+        outState.putSerializable("recipeDet",recipeDet);
     }
 }

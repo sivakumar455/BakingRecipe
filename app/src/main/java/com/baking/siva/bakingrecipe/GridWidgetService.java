@@ -2,6 +2,7 @@ package com.baking.siva.bakingrecipe;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -41,7 +42,6 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
 
     private void initData(){
 
-
         /*collection.clear();
         for (int idx= 0; idx<10;idx++){
             collection.add("List"+idx);
@@ -58,6 +58,9 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
         }catch (Exception e){
             e.printStackTrace();
         }
+        Log.v("TST","checking0");
+        /*gridRecipeAsyncTask mytask = new gridRecipeAsyncTask();
+        mytask.execute(myrecipe);*/
 
     }
 
@@ -90,6 +93,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
 
     @Override
     public RemoteViews getViewAt(int position) {
+        Log.v("TST","getViewAt");
 
         RemoteViews view = new RemoteViews(mContext.getPackageName(),
                 android.R.layout.simple_list_item_1);
@@ -128,5 +132,26 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
     @Override
     public boolean hasStableIds() {
         return false;
+    }
+
+    private class gridRecipeAsyncTask extends AsyncTask<String,Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            Log.v("TST","checking");
+            myRecipeList = new HttpRequest(strings[0]);
+            return myRecipeList.getJsonString();
+        }
+
+        @Override
+        protected void onPostExecute(final String trStr) {
+            if(trStr != null){
+                Log.v("TST","checking1");
+                recipeNameList = new RecipeList(trStr);
+                collection = recipeNameList.getRecipeList();
+            }
+            Log.v("TST","checking1"+collection);
+            super.onPostExecute(trStr);
+        }
     }
 }
