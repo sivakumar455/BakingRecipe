@@ -20,7 +20,6 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
     private final ArrayList<String> recipeList;
     Context mContext;
     final private ListItemClickListener mOnClickListener;
-    //private final OnClickListenerer mOnClickListener = new MyOnClickListener();
 
     public StepAdapter(Context context, ArrayList<String> recipeList,ListItemClickListener listener) {
         mContext = context;

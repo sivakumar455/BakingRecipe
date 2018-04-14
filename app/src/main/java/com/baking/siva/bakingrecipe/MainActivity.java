@@ -7,30 +7,35 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import com.baking.siva.bakingrecipe.util.HttpRequest;
 import com.baking.siva.bakingrecipe.util.RecipeList;
+import com.baking.siva.bakingrecipe.util.StepAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>,StepAdapter.ListItemClickListener {
     private final static String RECIPE_URL_KEY = "RECIPE_URL_KEY";
     private final static String RECIPE_URL =
             "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     // "https://gist.githubusercontent.com/sivakumar455/ef700c03d15d1d6530e082b0f96e93e9/raw/e726bf72a2b8b21c4620b3ca2c701c75280b0b95/baking.json";
     private static final int RECIPE_LOADER = 99;
     private static Parcelable state;
-    private ListView listView;
-    private GridView gridView;
+    private RecyclerView listRecycView;
+    private RecyclerView gridRecycView;
     private boolean mTwoPane;
+    private LinearLayoutManager mLayoutManager;
+    private GridLayoutManager gridLayoutManager;
+    private StepAdapter mAdapter;
+    private String mData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +49,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mTwoPane = true;
         }
 
-        LoaderManager loaderManager = getSupportLoaderManager();
-        Loader<String> recipeLoader = loaderManager.getLoader(RECIPE_LOADER);
+        if(savedInstanceState == null) {
 
-        if (recipeLoader == null) {
-            Log.v("MainActivity", "loader is null");
-            loaderManager.initLoader(RECIPE_LOADER, myBundle, this);
-        } else {
-            Log.v("MainActivity", "loader not null");
-            loaderManager.restartLoader(RECIPE_LOADER, myBundle, this);
+            LoaderManager loaderManager = getSupportLoaderManager();
+            Loader<String> recipeLoader = loaderManager.getLoader(RECIPE_LOADER);
+
+            if (recipeLoader == null) {
+                Log.v("MainActivity", "loader is null");
+                loaderManager.initLoader(RECIPE_LOADER, myBundle, this);
+            } else {
+                Log.v("MainActivity", "loader not null");
+                loaderManager.restartLoader(RECIPE_LOADER, myBundle, this);
+            }
         }
     }
 
@@ -105,20 +113,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<String> loader,final String data) {
 
+        mData = data;
         RecipeList recipeNameList = new RecipeList(data);
         ArrayList<String> recipeList = recipeNameList.getRecipeList();
 
         if(!mTwoPane) {
             Log.v("MODE","Single Pane");
 
-            listView = findViewById(R.id.recipe_list_view);
-            RecipeAdapter recipeAdapter = new RecipeAdapter(this, recipeList);
-            listView.setAdapter(recipeAdapter);
+            listRecycView = findViewById(R.id.recipe_list_view);
+            //RecipeAdapter recipeAdapter = new RecipeAdapter(this, recipeList);
+            mLayoutManager = new LinearLayoutManager(getApplicationContext());
+
+            listRecycView.setLayoutManager(mLayoutManager);
+
+            mAdapter = new StepAdapter(getApplicationContext(),recipeList,this);
+            listRecycView.setAdapter(mAdapter);
+
             if (state != null) {
                 Log.d("MainAcitvity", "trying to restore listview state..");
-                listView.onRestoreInstanceState(state);
+                //listRecycView.onRestoreInstanceState(state);
             }
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                     HashMap<String, HashMap<String, String>> myRecipe;
@@ -129,17 +144,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
                     startActivity(intent);
                 }
-            });
+            });*/
         }else{
             Log.v("MODE","Two Pane");
-            gridView = findViewById(R.id.recipe_grid_view);
-            RecipeAdapter recipeAdapter = new RecipeAdapter(this, recipeList);
-            gridView.setAdapter(recipeAdapter);
+
+            gridRecycView = findViewById(R.id.recipe_grid_view);
+            //RecipeAdapter recipeAdapter = new RecipeAdapter(this, recipeList);
+            gridLayoutManager = new GridLayoutManager(getApplicationContext(),3);
+
+            gridRecycView.setLayoutManager(gridLayoutManager);
+
+            mAdapter = new StepAdapter(getApplicationContext(),recipeList,this);
+            gridRecycView.setAdapter(mAdapter);
             if (state != null) {
                 Log.d("MainAcitvity", "trying to restore gridview state..");
-                gridView.onRestoreInstanceState(state);
+                //gridView.onRestoreInstanceState(state);
             }
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                     HashMap<String, HashMap<String, String>> myRecipe;
@@ -150,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
                     startActivity(intent);
                 }
-            });
+            });*/
         }
     }
 
@@ -160,12 +181,62 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
     @Override
     protected void onPause() {
-        Log.d("MainActivity", "saving listview/gridview state @onPause");
-        if (listView != null) {
-            state = listView.onSaveInstanceState();
-        }else if (gridView != null){
-            state = gridView.onSaveInstanceState();
-        }
         super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("MainActivity", "saving listview/gridview state @onSaveInstanceState");
+        if (listRecycView != null) {
+            state = mLayoutManager.onSaveInstanceState();
+            outState.putParcelable("listRecycView", state);
+        }else if (gridRecycView != null){
+            state = gridLayoutManager.onSaveInstanceState();
+            outState.putParcelable("gridRecycView", state);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(state != null) {
+            if (!mTwoPane) {
+                mLayoutManager.onRestoreInstanceState(state);
+                listRecycView.setLayoutManager(mLayoutManager);
+                listRecycView.setAdapter(mAdapter);
+            } else {
+                gridLayoutManager.onRestoreInstanceState(state);
+            }
+        }
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState != null){
+            Log.d("MainActivity", "saving listview/gridview state @OnRestoreInstance");
+            if (listRecycView != null) {
+                state = savedInstanceState.getParcelable("listRecycView");
+
+            }else if (gridRecycView != null){
+                state = savedInstanceState.getParcelable("gridRecycView");
+            }
+        }
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+        Toast.makeText(getApplicationContext(),String.valueOf(clickedItemIndex),Toast.LENGTH_SHORT).show();
+        HashMap<String, HashMap<String, String>> myRecipe;
+        if (mData != null) {
+            RecipeList recipeDtl = new RecipeList(mData);
+            myRecipe = recipeDtl.getRecipeDetails(clickedItemIndex);
+            Log.v("MAP", String.valueOf(Collections.singletonList(myRecipe)));
+            Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
+            intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
+            startActivity(intent);
+        }
     }
 }

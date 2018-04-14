@@ -46,6 +46,9 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
     private HashMap<String, String> hashStep;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
+    private long playbackPosition;
+    private Boolean playWhenReady;
+    private int currentWindow;
 
 
     public RecipeDetailFragment(){
@@ -56,6 +59,21 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle b = this.getArguments();
+
+        if(savedInstanceState != null){
+            playbackPosition = savedInstanceState.getLong("playbackPosition");
+            playWhenReady = savedInstanceState.getBoolean("playWhenReady");
+            currentWindow = savedInstanceState.getInt("currentWindow");
+
+            Log.v("PLAY",String.valueOf(playbackPosition)+String.valueOf(playWhenReady)+String.valueOf(currentWindow));
+        }else{
+            playWhenReady = true;
+            playbackPosition = 0;
+            currentWindow = 0;
+            Log.v("PLAY DEF",String.valueOf(playbackPosition)+String.valueOf(playWhenReady)+String.valueOf(currentWindow));
+        }
+
+
         if(b.getSerializable("hashIngredients") != null) {
             hashIng = (HashMap<String, HashMap<String, String>>) b.getSerializable("hashIngredients");
             Log.v("hashIngredients", String.valueOf(Collections.singletonList(hashIng)));
@@ -74,50 +92,44 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
         //return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = null;
         Log.v("TAB","Checking tab2");
-        if (hashStep != null) {
-            rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
-            TextView textView = rootView.findViewById(R.id.recipe_detail_text_view);
-            textView.setText(hashStep.get("description"));
-            // Initialize the player view.
-            mPlayerView = rootView.findViewById(R.id.playerView);
-            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                    (getResources(), R.drawable.exo_controls_play));
-            if(!hashStep.get("videoURL").isEmpty() ) {
-                Log.v("videourl",hashStep.get("videoURL"));
-                initializePlayer(Uri.parse(hashStep.get("videoURL")));
+
+            if (hashStep != null) {
+                rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
+                TextView textView = rootView.findViewById(R.id.recipe_detail_text_view);
+                textView.setText(hashStep.get("description"));
+                // Initialize the player view.
+                mPlayerView = rootView.findViewById(R.id.playerView);
+                mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
+                        (getResources(), R.drawable.exo_controls_play));
+                if (!hashStep.get("videoURL").isEmpty()) {
+                    Log.v("videourl", hashStep.get("videoURL"));
+                   // initializePlayer(Uri.parse(hashStep.get("videoURL")));
+                } else {
+                    //View myView = rootView.findViewById(R.id.playerView);
+                    //mPlayerView.onViewRemoved(myView);
+                    Log.v("no videourl", hashStep.get("videoURL"));
+                    mPlayerView.removeAllViews();
+                }
+
+            } else if (hashIng != null) {
+                rootView = inflater.inflate(R.layout.fragment_ingredients_list, container, false);
+
+                //LinearLayout linearLayout = new LinearLayout(getActivity().getApplicationContext());
+                LinearLayout linearLayout = rootView.findViewById(R.id.fragment_ingredients);
+                for (int idx = 0; idx < Integer.parseInt(hashIng.get("Length").get("ingredientLength")); idx++) {
+                    TextView textView = new TextView(getActivity().getApplicationContext());
+                    textView.setText(getString(R.string.ingredients, hashIng.get("ingredients" + idx).get("ingredient"),
+                            hashIng.get("ingredients" + idx).get("quantity"),
+                            hashIng.get("ingredients" + idx).get("measure")));
+                    textView.setTextSize(18);
+                    textView.setPadding(12, 12, 12, 12);
+                    linearLayout.addView(textView);
+                }
+                //Toast.makeText(getActivity().getApplicationContext(),"HashTag",Toast.LENGTH_SHORT).show();
+
+            } else {
+                Log.v("TAB", "Checking tab3");
             }
-            else
-            {
-                //View myView = rootView.findViewById(R.id.playerView);
-                //mPlayerView.onViewRemoved(myView);
-                Log.v("no videourl",hashStep.get("videoURL"));
-                mPlayerView.removeAllViews();
-            }
-
-        }else if(hashIng != null){
-            rootView = inflater.inflate(R.layout.fragment_ingredients_list, container, false);
-
-            //LinearLayout linearLayout = new LinearLayout(getActivity().getApplicationContext());
-            LinearLayout linearLayout = rootView.findViewById(R.id.fragment_ingredients);
-            for (int idx=0; idx<Integer.parseInt(hashIng.get("Length").get("ingredientLength")); idx++) {
-                TextView textView = new TextView(getActivity().getApplicationContext());
-                /*textView.setText(hashIng.get("ingredients"+idx).get("ingredient")+ "\t\t\t"+
-                        hashIng.get("ingredients"+idx).get("quantity")+"\t\t\t"+
-                        hashIng.get("ingredients"+idx).get("measure"));*/
-                textView.setText(getString(R.string.ingredients,hashIng.get("ingredients"+idx).get("ingredient"),
-                        hashIng.get("ingredients"+idx).get("quantity"),
-                        hashIng.get("ingredients"+idx).get("measure")));
-
-                textView.setTextSize(18);
-                textView.setPadding(12,12,12,12);
-                linearLayout.addView(textView);
-            }
-            //Toast.makeText(getActivity().getApplicationContext(),"HashTag",Toast.LENGTH_SHORT).show();
-
-        }
-        else {
-            Log.v("TAB","Checking tab3");
-        }
         return rootView;
     }
 
@@ -134,7 +146,8 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.setPlayWhenReady(playWhenReady);
+            mExoPlayer.seekTo(currentWindow, playbackPosition);
         }
     }
 
@@ -144,17 +157,59 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
      */
     private void releasePlayer() {
         if(mExoPlayer != null) {
-            mExoPlayer.stop();
+            playbackPosition = mExoPlayer.getCurrentPosition();
+            currentWindow = mExoPlayer.getCurrentWindowIndex();
+            playWhenReady = mExoPlayer.getPlayWhenReady();
             mExoPlayer.release();
             mExoPlayer = null;
         }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         releasePlayer();
     }
+
+   /* @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+    }*/
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("playbackPosition",playbackPosition);
+        outState.putBoolean("playWhenReady",playWhenReady);
+        outState.putInt("currentWindow",currentWindow);
+        Log.v("PLAY",String.valueOf(playbackPosition)+String.valueOf(playWhenReady)+String.valueOf(currentWindow));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            if(hashStep != null && mExoPlayer == null ) {
+                Log.v("videoURL ",hashStep.get("videoURL"));
+                initializePlayer(Uri.parse(hashStep.get("videoURL")));
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
+            if(hashStep != null ) {
+                Log.v("videourl",hashStep.get("videoURL"));
+                initializePlayer(Uri.parse(hashStep.get("videoURL")));
+            }
+        }
+    }
+
 
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
@@ -174,9 +229,9 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if((playbackState == ExoPlayer.STATE_READY) && playWhenReady){
-            Log.d("ExoPlayer", "onPlayerStateChanged: PLAYING");
+            Log.v("ExoPlayer", "onPlayerStateChanged: PLAYING");
         } else if((playbackState == ExoPlayer.STATE_READY)){
-            Log.d("ExoPlayer", "onPlayerStateChanged: PAUSED");
+            Log.v("ExoPlayer", "onPlayerStateChanged: PAUSED");
         }
 
     }
