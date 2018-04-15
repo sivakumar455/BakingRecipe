@@ -1,9 +1,9 @@
 package com.baking.siva.bakingrecipe;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.support.test.espresso.Espresso;
-import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
@@ -14,12 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.app.Instrumentation.ActivityResult;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.isInternal;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.AllOf.allOf;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtra;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 
 
 /**
@@ -35,17 +31,25 @@ public class RecipeIntentTest {
     @Before
     public void stubForAllIntents(){
         //Intents.intending(not(isInternal())).respondWith();
-        Intents.intending(not(isInternal())).respondWith(new ActivityResult(Activity.RESULT_OK, null));
+        //Intents.intending( not(isInternal())).respondWith(new ActivityResult(Activity.RESULT_OK, null));
+        Intent resultData = new Intent();
+        String phoneNumber = "123-345-6789";
+        resultData.putExtra("phone", phoneNumber);
+
+        Intents.intending(toPackage("com.baking.siva.bakingrecipe")).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
     }
-    @Test
+    /*@Test
     public void intentVerificationTesting(){
-        Intents.intended(allOf(
-                hasAction(Intent.CATEGORY_HOME)));
-    }
+        Intents.intended(toPackage("com.baking.siva.bakingrecipe"));
+    }*/
 
     @Test
     public void intentStubTesting(){
-        Espresso.onData(anything()).inAdapterView(ViewMatchers.withId(R.id.recipe_list_view)).atPosition(1).perform(ViewActions.click());
+       // Espresso.onData(anything()).inAdapterView(ViewMatchers.withId(R.id.recipe_list_view)).atPosition(1).perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withId(R.id.recipe_list_view)).perform();
+        Intents.intended(hasExtra(Intent.EXTRA_TEXT,"123-345-6789"));
+        //Intents.intended(toPackage("com.baking.siva.bakingrecipe"));
+
     }
 
 }

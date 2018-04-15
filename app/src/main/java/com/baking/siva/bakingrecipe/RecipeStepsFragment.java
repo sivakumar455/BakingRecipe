@@ -2,6 +2,7 @@ package com.baking.siva.bakingrecipe;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +31,8 @@ public class RecipeStepsFragment extends Fragment implements StepAdapter.ListIte
     private RecyclerView recyclerView;
     private StepAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
+    private Parcelable state;
+    private Parcelable stateList;
     //private GridLayoutManager gridLayoutManager;
 
     @Override
@@ -62,11 +65,15 @@ public class RecipeStepsFragment extends Fragment implements StepAdapter.ListIte
         super.onCreate(savedInstanceState);
 
         Bundle b = this.getArguments();
+        if(savedInstanceState != null) {
+            if(savedInstanceState.getParcelable("listRecycView") != null) {
+                stateList = savedInstanceState.getParcelable("listRecycView");
+            }
+        }
         if(b.getSerializable("hashmap") != null) {
             recipeDet = (HashMap<String, HashMap<String, String>>) b.getSerializable("hashmap");
             Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
         }
-
     }
 
     @Nullable
@@ -95,6 +102,12 @@ public class RecipeStepsFragment extends Fragment implements StepAdapter.ListIte
         mAdapter = new StepAdapter(getContext(),recStep,this);
         recyclerView.setAdapter(mAdapter);
 
+        if (stateList != null) {
+            Log.d("MainAcitvity", "trying to restore listview state in fragment..");
+            //listRecycView.onRestoreInstanceState(state);
+            mLayoutManager.onRestoreInstanceState(stateList);
+        }
+
         /*RecipeAdapter recipeAdapter = new RecipeAdapter(getActivity().getApplicationContext(), recStep);
         listView.setAdapter(recipeAdapter);*/
 
@@ -107,5 +120,15 @@ public class RecipeStepsFragment extends Fragment implements StepAdapter.ListIte
         });*/
 
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("MainActivity", "saving listview/gridview state @onSaveInstanceState");
+        if (recyclerView != null) {
+            state = mLayoutManager.onSaveInstanceState();
+            outState.putParcelable("listRecycView", state);
+        }
     }
 }

@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.baking.siva.bakingrecipe.util.HttpRequest;
 import com.baking.siva.bakingrecipe.util.RecipeList;
@@ -25,17 +24,19 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>,StepAdapter.ListItemClickListener {
     private final static String RECIPE_URL_KEY = "RECIPE_URL_KEY";
     private final static String RECIPE_URL =
-            "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
-    // "https://gist.githubusercontent.com/sivakumar455/ef700c03d15d1d6530e082b0f96e93e9/raw/e726bf72a2b8b21c4620b3ca2c701c75280b0b95/baking.json";
+            //"https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+     "https://gist.githubusercontent.com/sivakumar455/ef700c03d15d1d6530e082b0f96e93e9/raw/e726bf72a2b8b21c4620b3ca2c701c75280b0b95/baking.json";
     private static final int RECIPE_LOADER = 99;
     private static Parcelable state;
     private RecyclerView listRecycView;
     private RecyclerView gridRecycView;
     private boolean mTwoPane;
-    private LinearLayoutManager mLayoutManager;
+    private RecyclerView.LayoutManager  mLayoutManager;
     private GridLayoutManager gridLayoutManager;
     private StepAdapter mAdapter;
     private String mData;
+    private Parcelable stateList;
+    private Parcelable stateGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +50,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mTwoPane = true;
         }
 
-        if(savedInstanceState == null) {
-
-            LoaderManager loaderManager = getSupportLoaderManager();
-            Loader<String> recipeLoader = loaderManager.getLoader(RECIPE_LOADER);
-
-            if (recipeLoader == null) {
-                Log.v("MainActivity", "loader is null");
-                loaderManager.initLoader(RECIPE_LOADER, myBundle, this);
-            } else {
-                Log.v("MainActivity", "loader not null");
-                loaderManager.restartLoader(RECIPE_LOADER, myBundle, this);
+        if(savedInstanceState != null) {
+            if(savedInstanceState.getParcelable("listRecycView") != null) {
+                stateList = savedInstanceState.getParcelable("listRecycView");
+            }else {
+                stateGrid = savedInstanceState.getParcelable("gridRecycView");
             }
+
+        }
+        LoaderManager loaderManager = getSupportLoaderManager();
+        Loader<String> recipeLoader = loaderManager.getLoader(RECIPE_LOADER);
+
+        if (recipeLoader == null) {
+            Log.v("MainActivity", "loader is null");
+            loaderManager.initLoader(RECIPE_LOADER, myBundle, this);
+        } else {
+            Log.v("MainActivity", "loader not null");
+            loaderManager.restartLoader(RECIPE_LOADER, myBundle, this);
         }
     }
 
@@ -129,22 +135,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mAdapter = new StepAdapter(getApplicationContext(),recipeList,this);
             listRecycView.setAdapter(mAdapter);
 
-            if (state != null) {
+            if (stateList != null) {
                 Log.d("MainAcitvity", "trying to restore listview state..");
                 //listRecycView.onRestoreInstanceState(state);
+                mLayoutManager.onRestoreInstanceState(stateList);
             }
-            /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    HashMap<String, HashMap<String, String>> myRecipe;
-                    RecipeList recipeDtl = new RecipeList(data);
-                    myRecipe = recipeDtl.getRecipeDetails(position);
-                    Log.v("MAP", String.valueOf(Collections.singletonList(myRecipe)));
-                    Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
-                    intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
-                    startActivity(intent);
-                }
-            });*/
         }else{
             Log.v("MODE","Two Pane");
 
@@ -156,22 +151,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             mAdapter = new StepAdapter(getApplicationContext(),recipeList,this);
             gridRecycView.setAdapter(mAdapter);
+
             if (state != null) {
                 Log.d("MainAcitvity", "trying to restore gridview state..");
                 //gridView.onRestoreInstanceState(state);
+                gridLayoutManager.onRestoreInstanceState(stateGrid);
             }
-            /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    HashMap<String, HashMap<String, String>> myRecipe;
-                    RecipeList recipeDtl = new RecipeList(data);
-                    myRecipe = recipeDtl.getRecipeDetails(position);
-                    Log.v("MAP", String.valueOf(Collections.singletonList(myRecipe)));
-                    Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
-                    intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
-                    startActivity(intent);
-                }
-            });*/
         }
     }
 
@@ -179,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<String> loader) {
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -187,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
         Log.d("MainActivity", "saving listview/gridview state @onSaveInstanceState");
         if (listRecycView != null) {
             state = mLayoutManager.onSaveInstanceState();
@@ -200,35 +187,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onResume() {
         super.onResume();
-        if(state != null) {
-            if (!mTwoPane) {
-                mLayoutManager.onRestoreInstanceState(state);
-                listRecycView.setLayoutManager(mLayoutManager);
-                listRecycView.setAdapter(mAdapter);
-            } else {
-                gridLayoutManager.onRestoreInstanceState(state);
-            }
-        }
-
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if(savedInstanceState != null){
-            Log.d("MainActivity", "saving listview/gridview state @OnRestoreInstance");
-            if (listRecycView != null) {
-                state = savedInstanceState.getParcelable("listRecycView");
-
-            }else if (gridRecycView != null){
+        /*if(savedInstanceState != null){
+            Log.v("MainActivity", "saving listview/gridview state @OnRestoreInstance");
+            if (savedInstanceState.getParcelable("listRecycView") != null) {
+                Log.v("MainActivity", "saving listviewstate @OnRestoreInstance");
+                Parcelable stateList = savedInstanceState.getParcelable("listRecycView");
+            }else if (savedInstanceState.getParcelable("gridRecycView") != null){
+                Log.v("MainActivity", "saving gridview state @OnRestoreInstance");
                 state = savedInstanceState.getParcelable("gridRecycView");
+                gridLayoutManager.onRestoreInstanceState(state);
             }
-        }
+        }*/
     }
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Toast.makeText(getApplicationContext(),String.valueOf(clickedItemIndex),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),String.valueOf(clickedItemIndex),Toast.LENGTH_SHORT).show();
         HashMap<String, HashMap<String, String>> myRecipe;
         if (mData != null) {
             RecipeList recipeDtl = new RecipeList(mData);
