@@ -50,14 +50,14 @@ public class RecipeIntentTest {
             intended(hasComponent(RecipeStepsActivity.class.getName()));
             Log.v("intentTesting","List View Testing passed");
         }catch (NoMatchingViewException e){
-            Log.v("intentTesting","List View Testing failed");
+            Log.v("intentTesting","List View Testing failed and it can fail for tab mode ");
         }
         try {
             Espresso.onView(ViewMatchers.withId(R.id.recipe_grid_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.click()));
             intended(hasComponent(RecipeStepsActivity.class.getName()));
             Log.v("intentTesting","Grid View Testing");
         }catch (NoMatchingViewException e){
-            Log.v("intentTesting","Grid View Testing failed");
+            Log.v("intentTesting","Grid View Testing failed and it can fail for non tab mode ");
         }
     }
 }

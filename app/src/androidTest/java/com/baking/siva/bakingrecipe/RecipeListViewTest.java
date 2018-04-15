@@ -33,13 +33,13 @@ public class RecipeListViewTest {
             Espresso.onView(ViewMatchers.withId(R.id.recipe_list_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.click()));
             Log.v("RecipeListViewTest","List View Testing passed");
         }catch (NoMatchingViewException e){
-            Log.v("RecipeListViewTest","List View Testing failed");
+            Log.v("RecipeListViewTest","List View Testing failed and it can fail for tab mode ");
         }
         try{
             Espresso.onView(ViewMatchers.withId(R.id.recipe_grid_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.click()));
             Log.v("RecipeListViewTest","grid View Testing passed ");
         }catch (NoMatchingViewException e){
-            Log.v("RecipeListViewTest","grid View Testing failed ");
+            Log.v("RecipeListViewTest","grid View Testing failed  and it can fail for non tab mode");
 
         }
     }

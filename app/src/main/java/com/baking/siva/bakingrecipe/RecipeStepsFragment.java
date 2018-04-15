@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.baking.siva.bakingrecipe.util.StepAdapter;
 
@@ -37,7 +36,7 @@ public class RecipeStepsFragment extends Fragment implements StepAdapter.ListIte
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Toast.makeText(getContext(),"Hello ",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(),"Hello ",Toast.LENGTH_SHORT).show();
         mCallback.OnStepSelected(clickedItemIndex);
     }
 
