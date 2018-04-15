@@ -2,20 +2,25 @@ package com.baking.siva.bakingrecipe;
 
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.content.Intent;
 import android.support.test.espresso.Espresso;
-import android.support.test.espresso.intent.Intents;
+import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.Intents.intending;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.isInternal;
+import static org.hamcrest.Matchers.not;
 
 
 /**
@@ -30,13 +35,7 @@ public class RecipeIntentTest {
 
     @Before
     public void stubForAllIntents(){
-        //Intents.intending(not(isInternal())).respondWith();
-        //Intents.intending( not(isInternal())).respondWith(new ActivityResult(Activity.RESULT_OK, null));
-        Intent resultData = new Intent();
-        String phoneNumber = "123-345-6789";
-        resultData.putExtra("phone", phoneNumber);
-
-        Intents.intending(toPackage("com.baking.siva.bakingrecipe")).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+        intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
     }
     /*@Test
     public void intentVerificationTesting(){
@@ -44,12 +43,21 @@ public class RecipeIntentTest {
     }*/
 
     @Test
-    public void intentStubTesting(){
-       // Espresso.onData(anything()).inAdapterView(ViewMatchers.withId(R.id.recipe_list_view)).atPosition(1).perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withId(R.id.recipe_list_view)).perform();
-        Intents.intended(hasExtra(Intent.EXTRA_TEXT,"123-345-6789"));
-        //Intents.intended(toPackage("com.baking.siva.bakingrecipe"));
+    public void intentTesting(){
 
+        try {
+            Espresso.onView(ViewMatchers.withId(R.id.recipe_list_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.click()));
+            intended(hasComponent(RecipeStepsActivity.class.getName()));
+            Log.v("intentTesting","List View Testing passed");
+        }catch (NoMatchingViewException e){
+            Log.v("intentTesting","List View Testing failed");
+        }
+        try {
+            Espresso.onView(ViewMatchers.withId(R.id.recipe_grid_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.click()));
+            intended(hasComponent(RecipeStepsActivity.class.getName()));
+            Log.v("intentTesting","Grid View Testing");
+        }catch (NoMatchingViewException e){
+            Log.v("intentTesting","Grid View Testing failed");
+        }
     }
-
 }
