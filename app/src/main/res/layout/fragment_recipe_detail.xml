@@ -28,6 +28,10 @@
             app:show_timeout="10000"
             app:hide_on_touch="true"
             android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/recipe_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/recipe_detail_text_view"
             android:layout_width="match_parent"

@@ -34,7 +34,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecipeStepsActivity"
-            android:label="RecipeSteps" />
+            android:label="RecipeSteps"
+            android:parentActivityName="com.baking.siva.bakingrecipe.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.baking.siva.bakingrecipe.MainActivity"/>
+        </activity>
 
         <receiver android:name=".BakingWidgetProvider">
             <intent-filter>

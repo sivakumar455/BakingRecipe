@@ -9,9 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -97,6 +99,26 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
                 rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
                 TextView textView = rootView.findViewById(R.id.recipe_detail_text_view);
                 textView.setText(hashStep.get("description"));
+                //Adding recipe image
+                if(!hashStep.get("thumbnailURL").isEmpty()) {
+                    Log.v("thumbnailURL", hashStep.get("thumbnailURL"));
+                    ImageView recipeImage = rootView.findViewById(R.id.recipe_image);
+                    /*Picasso.with(getContext()).load(hashStep.get("thumbnailURL"))
+                            .placeholder(R.drawable.ic_launcher_background).into(recipeImage);*/
+
+                    String filePath = hashStep.get("thumbnailURL");
+
+                    Glide.with( getContext() )
+                            .load(filePath)
+                            .placeholder(R.drawable.ic_launcher_background)
+                            .error(R.drawable.exo_controls_rewind)
+                            .override(200, 200)
+                            .into( recipeImage );
+                    Log.v("thumbnailURL", "Done Loading");
+
+                }else{
+                    Log.v("thumbnailURL", "No URL found");
+                }
                 // Initialize the player view.
                 mPlayerView = rootView.findViewById(R.id.playerView);
                 mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
