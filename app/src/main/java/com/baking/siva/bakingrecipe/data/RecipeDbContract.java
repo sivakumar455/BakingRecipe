@@ -26,7 +26,7 @@ public class RecipeDbContract {
         public static final String COLUMN_RECIPE_NAME = "RecipeName";
         public static final String COLUMN_IMAGE_URL = "Image";
         public static final String COLUMN_STEPS_SIZE = "StepSize";
-        public static final String COLUMN_INGREDIENT_SIZE = "IngredientSize";
+        public static final String COLUMN_INGREDIENTS_SIZE = "IngredientsSize";
         public static final String COLUMN_TIMESTAMP = "timestamp";
         public static final String COLUMN_INGREDIENTS_ID = "IngredientsId";
         public static final String COLUMN_QUANTITY = "Quantity";

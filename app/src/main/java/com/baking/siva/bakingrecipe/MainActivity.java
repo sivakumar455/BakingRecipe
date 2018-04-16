@@ -13,15 +13,15 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.baking.siva.bakingrecipe.util.HeaderAdapter;
 import com.baking.siva.bakingrecipe.util.HttpRequest;
 import com.baking.siva.bakingrecipe.util.RecipeList;
-import com.baking.siva.bakingrecipe.util.StepAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>,StepAdapter.ListItemClickListener {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>,HeaderAdapter.ListItemClickListener {
     private final static String RECIPE_URL_KEY = "RECIPE_URL_KEY";
     private final static String RECIPE_URL =
             "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private boolean mTwoPane;
     private RecyclerView.LayoutManager  mLayoutManager;
     private GridLayoutManager gridLayoutManager;
-    private StepAdapter mAdapter;
+    private HeaderAdapter mAdapter;
     private String mData;
     private Parcelable stateList;
     private Parcelable stateGrid;
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             listRecycView.setLayoutManager(mLayoutManager);
 
-            mAdapter = new StepAdapter(getApplicationContext(),recipeList,this);
+            mAdapter = new HeaderAdapter(getApplicationContext(),recipeList,this);
             listRecycView.setAdapter(mAdapter);
 
             if (stateList != null) {
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             gridRecycView.setLayoutManager(gridLayoutManager);
 
-            mAdapter = new StepAdapter(getApplicationContext(),recipeList,this);
+            mAdapter = new HeaderAdapter(getApplicationContext(),recipeList,this);
             gridRecycView.setAdapter(mAdapter);
 
             if (state != null) {
@@ -215,6 +215,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Log.v("MAP", String.valueOf(Collections.singletonList(myRecipe)));
             Intent intent = new Intent(getApplicationContext(), RecipeStepsActivity.class);
             intent.putExtra(Intent.EXTRA_TEXT, myRecipe);
+
+            HashMap<String,String> recipeHeader;
+            recipeHeader = recipeDtl.getRecipeHeader(clickedItemIndex);
+            intent.putExtra("recipeHeader", recipeHeader);
+
             startActivity(intent);
         }
     }

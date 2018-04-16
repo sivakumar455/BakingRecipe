@@ -5,11 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/recipe_steps_container"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_weight="2"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/fav_recipe_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mark As Favourite"
+            android:theme="@style/AppTheme.Gray"/>
+
+        <FrameLayout
+            android:id="@+id/recipe_steps_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/recipe_detail_tab_view"

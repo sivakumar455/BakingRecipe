@@ -1,14 +1,39 @@
 package com.baking.siva.bakingrecipe;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
+import com.baking.siva.bakingrecipe.data.RecipeDbContract;
+import com.baking.siva.bakingrecipe.data.RecipeDbHelper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_IMAGE_URL;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_INGREDIENT;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_INGREDIENTS_ID;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_INGREDIENTS_SIZE;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_MEASURE;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_QUANTITY;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_RECIPE_ID;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_RECIPE_NAME;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.COLUMN_STEPS_SIZE;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb.CONTENT_URI;
+import static com.baking.siva.bakingrecipe.data.RecipeDbContract.RecipeDb._ID;
 
 public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeStepsFragment.OnStepClickListener{
 
@@ -19,6 +44,8 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
     private static final String MY_PREFS_NAME = "myPref";
     private final boolean  DEF= false;
     private  RecipeDetailFragment recipeDetailFragment;
+    private SQLiteDatabase mDb;
+    private HashMap<String,String> recipeHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +74,74 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
        }*/
     }
 
+    private void addFavRecipes(){
+
+        Log.v("addFavrecipes",String.valueOf(Collections.singletonList(recipeDet)));
+
+        ArrayList<String> mArrayList = new ArrayList<>();
+        RecipeDbHelper recipeDbHelper = new RecipeDbHelper(getApplicationContext());
+        mDb = recipeDbHelper.getReadableDatabase();
+        try {
+
+            Cursor cursor = getContentResolver().query(CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    _ID);
+            cursor.moveToFirst();
+            mArrayList.add(cursor.getString(cursor.getColumnIndex(COLUMN_RECIPE_ID)));
+            Log.v("StepActivity", "Dumping cursor");
+            DatabaseUtils.dumpCursor(cursor);
+            while (cursor.moveToNext()) {
+                mArrayList.add(cursor.getString(cursor.getColumnIndex(COLUMN_RECIPE_ID)));
+            }
+            Log.v("StepActivity", String.valueOf(Arrays.asList(mArrayList)));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        Log.v("StepActivity", String.valueOf(recipeHeader.get("id")));
+        if(! mArrayList.contains(recipeHeader.get("id"))) {
+            ContentValues cv = new ContentValues();
+            for(int idx=0 ; idx < Integer.parseInt(recipeDet.get("Length").get("ingredientLength"));idx++) {
+                cv.put(COLUMN_RECIPE_ID, String.valueOf(recipeHeader.get("id")));
+                cv.put(COLUMN_RECIPE_NAME, String.valueOf(recipeHeader.get("name")));
+                cv.put(COLUMN_IMAGE_URL, String.valueOf(recipeHeader.get("image")));
+                cv.put(COLUMN_STEPS_SIZE, String.valueOf(recipeDet.get("Length").get("stepLength")));
+                cv.put(COLUMN_INGREDIENTS_SIZE, String.valueOf(recipeDet.get("Length").get("ingredientLength")));
+
+                cv.put(COLUMN_INGREDIENTS_ID, String.valueOf(idx));
+                cv.put(COLUMN_QUANTITY, String.valueOf(recipeDet.get("ingredients"+idx).get("quantity")));
+                cv.put(COLUMN_MEASURE, String.valueOf(recipeDet.get("ingredients"+idx).get("measure")));
+                cv.put(COLUMN_INGREDIENT, String.valueOf(recipeDet.get("ingredients"+idx).get("ingredient")));
+                cv.put(RecipeDbContract.RecipeDb.COLUMN_STEPS_ID, String.valueOf(idx));
+                cv.put(RecipeDbContract.RecipeDb.COLUMN_SHORT_DESCRIPTION, String.valueOf(recipeHeader.get("name")));
+
+                Uri uri = getContentResolver().insert(CONTENT_URI, cv);
+                finish();
+            }
+             /*
+            for (int idx=0 ; idx < Integer.parseInt(recipeDet.get("Length").get("stepLength"));idx++) {
+                cv.put(COLUMN_RECIPE_ID, String.valueOf(recipeHeader.get("id")));
+                cv.put(COLUMN_RECIPE_NAME, String.valueOf(recipeHeader.get("name")));
+                cv.put(COLUMN_IMAGE_URL, String.valueOf(recipeHeader.get("image")));
+                cv.put(COLUMN_STEPS_SIZE, String.valueOf(recipeDet.get("Length").get("stepLength")));
+                cv.put(COLUMN_INGREDIENTS_SIZE, String.valueOf(recipeDet.get("Length").get("ingredientLength")));
+
+                cv.put(COLUMN_STEPS_ID, String.valueOf(idx));
+                cv.put(COLUMN_SHORT_DESCRIPTION, String.valueOf(recipeDet.get("steps"+idx).get("shortDescription")));
+                cv.put(COLUMN_DESCRIPTION, String.valueOf(recipeDet.get("steps"+idx).get("description")));
+                cv.put(COLUMN_VIDEO_URL, String.valueOf(recipeDet.get("steps"+idx).get("videoURL")));
+                cv.put(COLUMN_THUMBNAIL_URL, String.valueOf(recipeDet.get("steps"+idx).get("thumbnailURL")));
+                Uri uri = getContentResolver().insert(CONTENT_URI, cv);
+                finish();
+            }*/
+
+        }else {
+            Toast.makeText(getApplicationContext(),"Already added ",Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void stepRecipe(){
         final Intent intentStarted = getIntent();
         if (intentStarted.hasExtra(Intent.EXTRA_TEXT)) {
@@ -59,6 +154,20 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
             Log.v("MAP", String.valueOf(Collections.singletonList(recipeDet)));
             //Picasso.with(getApplicationContext()).load(movieDet.get("poster")).placeholder(R.drawable.ic_launcher_background).into(poster);
         }
+
+        if(intentStarted.hasExtra("recipeHeader")){
+            recipeHeader = (HashMap<String, String>) intentStarted.getSerializableExtra("recipeHeader");
+            Log.v("recipeHeader", String.valueOf(Collections.singletonList(recipeHeader)));
+        }
+
+        Button fav = findViewById(R.id.fav_recipe_btn);
+        fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"Favourites",Toast.LENGTH_SHORT).show();
+                addFavRecipes();
+            }
+        });
 
         recipeStepsFragment = new RecipeStepsFragment();
         Bundle bundle = new Bundle();

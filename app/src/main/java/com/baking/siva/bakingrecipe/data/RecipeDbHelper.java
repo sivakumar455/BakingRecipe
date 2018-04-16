@@ -25,20 +25,19 @@ public class RecipeDbHelper extends SQLiteOpenHelper {
                 RecipeDbContract.RecipeDb._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 RecipeDbContract.RecipeDb.COLUMN_RECIPE_ID+ " INTEGER NOT NULL," +
                 RecipeDbContract.RecipeDb.COLUMN_RECIPE_NAME + " TEXT NOT NULL, " +
-                RecipeDbContract.RecipeDb.COLUMN_IMAGE_URL + " TEXT NOT NULL, " +
+                RecipeDbContract.RecipeDb.COLUMN_IMAGE_URL + " TEXT, " +
                 RecipeDbContract.RecipeDb.COLUMN_STEPS_SIZE + " TEXT NOT NULL, " +
-                RecipeDbContract.RecipeDb.COLUMN_INGREDIENT_SIZE + " TEXT NOT NULL, " +
-                RecipeDbContract.RecipeDb.COLUMN_INGREDIENTS_ID + " TEXT, " +
-                RecipeDbContract.RecipeDb.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                RecipeDbContract.RecipeDb.COLUMN_INGREDIENTS_SIZE + " TEXT NOT NULL, " +
+                RecipeDbContract.RecipeDb.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                 RecipeDbContract.RecipeDb.COLUMN_INGREDIENTS_ID + " TEXT NOT NULL, " +
                 RecipeDbContract.RecipeDb.COLUMN_QUANTITY + " TEXT NOT NULL, " +
                 RecipeDbContract.RecipeDb.COLUMN_MEASURE + " TEXT NOT NULL, " +
                 RecipeDbContract.RecipeDb.COLUMN_INGREDIENT + " TEXT NOT NULL, " +
                 RecipeDbContract.RecipeDb.COLUMN_STEPS_ID + " TEXT NOT NULL, " +
                 RecipeDbContract.RecipeDb.COLUMN_SHORT_DESCRIPTION + " TEXT NOT NULL, " +
-                RecipeDbContract.RecipeDb.COLUMN_DESCRIPTION + " TEXT NOT NULL, " +
-                RecipeDbContract.RecipeDb.COLUMN_VIDEO_URL + " TEXT NOT NULL, " +
-                RecipeDbContract.RecipeDb.COLUMN_THUMBNAIL_URL + " TEXT NOT NULL, " +
+                RecipeDbContract.RecipeDb.COLUMN_DESCRIPTION + " TEXT, " +
+                RecipeDbContract.RecipeDb.COLUMN_VIDEO_URL + " TEXT, " +
+                RecipeDbContract.RecipeDb.COLUMN_THUMBNAIL_URL + " TEXT" +
                 "); ";
         sqLiteDatabase.execSQL(SQL_CREATE_RECIPELIST_TABLE);
     }

@@ -35,6 +35,25 @@ public class RecipeList {
         return recipeList;
     }
 
+    public HashMap<String,String> getRecipeHeader(int Id){
+        HashMap<String,String> recipeHeader = new HashMap<>();
+        try {
+            JSONArray objectResults = new JSONArray(jsonRecipeObj);
+            JSONObject objName = objectResults.getJSONObject(Id);
+            String name = objName.getString("name");
+            String id = objName.getString("id");
+            String image = objName.getString("image");
+            String servings = objName.getString("servings");
+            recipeHeader.put("name",name);
+            recipeHeader.put("id",id);
+            recipeHeader.put("image",image);
+            recipeHeader.put("servings",servings);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return recipeHeader;
+    }
+
     public HashMap<String,HashMap<String,String>> getRecipeDetails(int position){
         HashMap<String ,HashMap<String,String>> map = new HashMap<>();
         HashMap<String,String> innMap;
