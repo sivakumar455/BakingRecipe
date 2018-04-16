@@ -59,6 +59,8 @@ public class BakingWidgetProvider extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
         views.setOnClickPendingIntent(R.id.widget_layout_main,pendingIntent);
 
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,R.id.recipe_list_view);
+
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -71,6 +73,7 @@ public class BakingWidgetProvider extends AppWidgetProvider {
             Toast.makeText(context,"Updating Widget",Toast.LENGTH_SHORT).show();
             Log.v("Widget","Updating");
         }
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
     @Override
