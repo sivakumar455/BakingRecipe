@@ -12,8 +12,9 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import com.baking.siva.bakingrecipe.util.IngActivity;
+import com.baking.siva.bakingrecipe.util.IngredientService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -51,8 +52,9 @@ public class BakingWidgetProvider extends AppWidgetProvider {
             setRemoteAdapterV11(context, views);
         }
 
-        Intent appIntent = new Intent(context, IngActivity.class);
-        PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent appIntent = new Intent(context, IngredientService.class);
+        PendingIntent appPendingIntent = PendingIntent.getService(context,0,appIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+                //PendingIntent.getService(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.recipe_list_view, appPendingIntent);
 
         Intent intent = new Intent(context,MainActivity.class);
@@ -63,6 +65,13 @@ public class BakingWidgetProvider extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    public static void updateIngListWidgets(Context context, AppWidgetManager appWidgetManager,
+                                            ArrayList<String> mArray, int[] appWidgetIds) {
+        for (int appWidgetId : appWidgetIds) {
+            updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
     }
 
     @Override
