@@ -35,6 +35,18 @@ public class RecipeList {
         return recipeList;
     }
 
+    public String getImageUrl(int position){
+        String image = null;
+        try {
+            JSONArray objectResults = new JSONArray(jsonRecipeObj);
+            JSONObject objName = objectResults.getJSONObject(position);
+            image = objName.getString("image");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return image;
+    }
+
     public HashMap<String,String> getRecipeHeader(int Id){
         HashMap<String,String> recipeHeader = new HashMap<>();
         try {

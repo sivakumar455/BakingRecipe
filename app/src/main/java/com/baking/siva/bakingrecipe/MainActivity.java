@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             listRecycView.setLayoutManager(mLayoutManager);
 
-            mAdapter = new HeaderAdapter(getApplicationContext(),recipeList,this);
+            mAdapter = new HeaderAdapter(getApplicationContext(),recipeList,this,data);
             listRecycView.setAdapter(mAdapter);
 
             if (stateList != null) {
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             gridRecycView.setLayoutManager(gridLayoutManager);
 
-            mAdapter = new HeaderAdapter(getApplicationContext(),recipeList,this);
+            mAdapter = new HeaderAdapter(getApplicationContext(),recipeList,this,data);
             gridRecycView.setAdapter(mAdapter);
 
             if (state != null) {

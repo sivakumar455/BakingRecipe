@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -109,14 +108,28 @@ public class RecipeDetailFragment extends Fragment implements  ExoPlayer.EventLi
 
                     String filePath = hashStep.get("thumbnailURL");
 
-                    DrawableRequestBuilder thumbnailRequest = Glide.with(getContext()).load(filePath).thumbnail(0.5f);
-
+                    //String filePath = "http://blog.room34.com/wp-content/uploads/underdog/logo.thumbnail.png";
+                    /*DrawableRequestBuilder thumbnailRequest = Glide.with(getContext()).load(filePath).thumbnail(0.5f);
                     Glide.with( getContext() )
                             .load(filePath)
                             .thumbnail(thumbnailRequest)
                             .placeholder(R.drawable.ic_launcher_background)
                             .error(R.mipmap.ic_launcher)
-                            .into( recipeImage );
+                            .into( recipeImage );*/
+
+                    Glide.with(getContext())
+                            .load(filePath)
+                            .asBitmap()
+                            .thumbnail(
+                                    Glide.with(getContext())
+                                            .load(filePath)
+                                            .asBitmap()
+                                            .thumbnail(0.5f)
+                            )
+                            .placeholder(R.drawable.ic_launcher_background)
+                            .error(R.mipmap.ic_launcher)
+                            .into(recipeImage);
+
                     Log.v("thumbnailURL", "Done Loading");
 
                 }else{
