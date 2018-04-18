@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class IngredientService extends IntentService {
 
     public IngredientService() {
-        super("IngrdientService");
+        super("IngredientService");
     }
 
     @Override

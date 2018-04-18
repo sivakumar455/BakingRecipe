@@ -10,11 +10,9 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
-import com.baking.siva.bakingrecipe.util.IngredientService;
+import com.baking.siva.bakingrecipe.util.IngActivity;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -31,6 +29,8 @@ public class BakingWidgetProvider extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_widget_provider);
         //views.setTextViewText(R.id.appwidget_text, widgetText);
+
+        //views.setTextViewText(R.id.ing_list_widget,"List of ingredient");
 
         /* Testing update functionality */
         Intent intentUpdate = new Intent(context, BakingWidgetProvider.class);
@@ -52,8 +52,10 @@ public class BakingWidgetProvider extends AppWidgetProvider {
             setRemoteAdapterV11(context, views);
         }
 
-        Intent appIntent = new Intent(context, IngredientService.class);
-        PendingIntent appPendingIntent = PendingIntent.getService(context,0,appIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent appIntent = new Intent(context, IngActivity.class);
+        //context.startService(appIntent);
+        appIntent.setAction("Action");
+        PendingIntent appPendingIntent = PendingIntent.getActivity(context,0,appIntent,PendingIntent.FLAG_UPDATE_CURRENT);
                 //PendingIntent.getService(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.recipe_list_view, appPendingIntent);
 
@@ -67,19 +69,19 @@ public class BakingWidgetProvider extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    public static void updateIngListWidgets(Context context, AppWidgetManager appWidgetManager,
+    /*public static void updateIngListWidgets(Context context, AppWidgetManager appWidgetManager,
                                             ArrayList<String> mArray, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
-    }
+    }*/
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
-            Toast.makeText(context,"Updating Widget",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,"Updating Widget",Toast.LENGTH_SHORT).show();
             Log.v("Widget","Updating");
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);

@@ -164,7 +164,7 @@ public class RecipeStepsActivity extends AppCompatActivity  implements  RecipeSt
         fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"Favourites",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"Favourites",Toast.LENGTH_SHORT).show();
                 addFavRecipes();
             }
         });
