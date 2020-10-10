@@ -26,7 +26,7 @@ public class RecipeListViewTest {
 
     @Test
     public void click_on_list_view_images() {
-        // Espresso.onData(anything()).inAdapterView(ViewMatchers.withId(R.id.recipe_list_view)).atPosition(1).perform(ViewActions.click());
+        //  Espresso.onData(anything()).inAdapterView(ViewMatchers.withId(R.id.recipe_list_view)).atPosition(1).perform(ViewActions.click());
 
         try
         {
